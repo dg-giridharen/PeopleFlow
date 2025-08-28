@@ -1,0 +1,13 @@
+_pycache_
+.env
+.env.template
+# Python
+_pycache_/
+*.pyc
+
+# Environment
+venv/
+
+
+# VS Code
+.vscode/

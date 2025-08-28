@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Portal - AI-Powered HR Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-user me-2"></i>
+            Employee Self-Service Portal
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Employee Information -->
+    <div class="col-lg-4">
+        <div class="employee-card">
+            <div class="text-center">
+                <i class="fas fa-user-circle fa-4x mb-3"></i>
+                <div id="employeeInfo">
+                    <h4>Select Employee</h4>
+                    <p class="mb-1">Please select an employee ID</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Employee Selector -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-id-card me-2"></i>
+                    Employee Selection
+                </h6>
+            </div>
+            <div class="card-body">
+                <select class="form-select" id="employeeSelect">
+                    <option value="">Select Employee ID</option>
+                    <option value="EMP001">EMP001 - John Smith</option>
+                    <option value="EMP002">EMP002 - Sarah Johnson</option>
+                    <option value="EMP003">EMP003 - Mike Chen</option>
+                    <option value="EMP004">EMP004 - Emily Davis</option>
+                    <option value="EMP005">EMP005 - David Wilson</option>
+                    <option value="EMP006">EMP006 - Lisa Brown</option>
+                    <option value="EMP007">EMP007 - Robert Taylor</option>
+                    <option value="EMP008">EMP008 - Jennifer Martinez</option>
+                    <option value="EMP009">EMP009 - Alex Thompson</option>
+                    <option value="EMP010">EMP010 - Maria Garcia</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Leave Balance -->
+        <div class="leave-balance-card">
+            <h6 class="mb-3">
+                <i class="fas fa-calendar-check me-2"></i>
+                Leave Balance
+            </h6>
+            <div id="leaveBalance">
+                <div class="text-center">
+                    <p class="mb-0">Select an employee to view balance</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Leave Request Form -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-plus me-2"></i>
+                    Submit Leave Request
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="leaveRequestForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="start_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="end_date" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="leaveType" class="form-label">Leave Type</label>
+                        <select class="form-select" id="leaveType" name="leave_type" required>
+                            <option value="annual">Annual Leave</option>
+                            <option value="sick">Sick Leave</option>
+                            <option value="personal">Personal Leave</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="leaveReason" class="form-label">Reason (Optional)</label>
+                        <textarea class="form-control" id="leaveReason" name="reason" rows="3" placeholder="Please provide a brief reason for your leave request..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Submit Request
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-primary w-100 mb-2" onclick="checkLeaveBalance()">
+                            <i class="fas fa-calendar-check me-2"></i>
+                            Check Balance
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-success w-100 mb-2" onclick="viewMyAssets()">
+                            <i class="fas fa-laptop me-2"></i>
+                            My Assets
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-info w-100 mb-2" onclick="contactHR()">
+                            <i class="fas fa-headset me-2"></i>
+                            Contact HR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- My Assets -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-laptop me-2"></i>
+                    My Assigned Assets
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="myAssets">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-laptop fa-3x mb-3"></i>
+                        <p>Select an employee to view assigned assets</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leave Request Success Modal -->
+<div class="modal fade" id="leaveSuccessModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Leave Request Submitted
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fas fa-calendar-check fa-4x text-success mb-3"></i>
+                    <h4>Request Submitted Successfully!</h4>
+                    <p class="mb-0">Your leave request has been submitted and is being processed. You will receive a notification once it's approved.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Suggestions -->
+<div class="position-fixed" style="bottom: 120px; right: 20px; z-index: 998;">
+    <div class="card shadow-sm" style="width: 250px;">
+        <div class="card-header bg-light py-2">
+            <small class="text-muted">
+                <i class="fas fa-lightbulb me-1"></i>
+                Try asking the chat:
+            </small>
+        </div>
+        <div class="card-body py-2">
+            <div class="d-grid gap-1">
+                <button class="btn btn-sm btn-outline-primary text-start" onclick="sendSuggestedMessage('What is my leave balance?')">
+                    "What is my leave balance?"
+                </button>
+                <button class="btn btn-sm btn-outline-primary text-start" onclick="sendSuggestedMessage('I want to request 3 days leave')">
+                    "I want to request 3 days leave"
+                </button>
+                <button class="btn btn-sm btn-outline-primary text-start" onclick="sendSuggestedMessage('Show my assigned assets')">
+                    "Show my assigned assets"
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Employee portal specific JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Set minimum date to today for leave requests
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('startDate').min = today;
+    document.getElementById('endDate').min = today;
+    
+    // Update end date minimum when start date changes
+    document.getElementById('startDate').addEventListener('change', function() {
+        document.getElementById('endDate').min = this.value;
+    });
+    
+    // Set default employee for demo
+    document.getElementById('employeeSelect').value = 'EMP001';
+    currentEmployeeId = 'EMP001';
+    refreshEmployeeData();
+});
+
+// Override the leave request handler for employee portal
+async function handleLeaveRequest(e) {
+    e.preventDefault();
+    
+    if (!currentEmployeeId) {
+        showNotification('Please select an employee first', 'warning');
+        return;
+    }
+    
+    const formData = new FormData(e.target);
+    const data = {
+        employee_id: currentEmployeeId,
+        start_date: formData.get('start_date'),
+        end_date: formData.get('end_date'),
+        leave_type: formData.get('leave_type'),
+        reason: formData.get('reason')
+    };
+    
+    try {
+        const result = await apiCall('/api/leave-requests', 'POST', data);
+        
+        if (result.success) {
+            // Show success modal
+            const modal = new bootstrap.Modal(document.getElementById('leaveSuccessModal'));
+            modal.show();
+            
+            e.target.reset();
+            refreshEmployeeData();
+        } else {
+            showNotification(result.message, 'danger');
+        }
+    } catch (error) {
+        showNotification('Failed to submit leave request', 'danger');
+    }
+}
+
+// Update employee info display
+function updateEmployeeInfo(employee, balance, assets) {
+    // Update employee info
+    const employeeInfo = document.getElementById('employeeInfo');
+    if (employeeInfo && employee) {
+        employeeInfo.innerHTML = `
+            <h4>${employee.name}</h4>
+            <p class="mb-1"><strong>ID:</strong> ${employee.employee_id}</p>
+            <p class="mb-1"><strong>Role:</strong> ${employee.role}</p>
+            <p class="mb-0"><strong>Department:</strong> ${employee.department}</p>
+        `;
+    }
+    
+    // Update leave balance
+    const leaveBalance = document.getElementById('leaveBalance');
+    if (leaveBalance && balance) {
+        leaveBalance.innerHTML = `
+            <div class="row text-center">
+                <div class="col-4">
+                    <div class="h3 mb-0">${balance.annual_leave}</div>
+                    <small>Annual</small>
+                </div>
+                <div class="col-4">
+                    <div class="h3 mb-0">${balance.sick_leave}</div>
+                    <small>Sick</small>
+                </div>
+                <div class="col-4">
+                    <div class="h3 mb-0">${balance.personal_leave}</div>
+                    <small>Personal</small>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Update assets
+    const myAssets = document.getElementById('myAssets');
+    if (myAssets && assets && assets.assets) {
+        if (assets.assets.length > 0) {
+            myAssets.innerHTML = `
+                <div class="row">
+                    ${assets.assets.map(asset => `
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-${getAssetIcon(asset.asset_type)} me-2"></i>
+                                        ${asset.brand} ${asset.model}
+                                    </h6>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            ID: ${asset.asset_id}<br>
+                                            Type: ${asset.asset_type}<br>
+                                            Specs: ${asset.specifications}
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            myAssets.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-laptop fa-3x mb-3"></i>
+                    <p>No assets assigned yet</p>
+                </div>
+            `;
+        }
+    }
+}
+
+function getAssetIcon(assetType) {
+    const icons = {
+        laptop: 'laptop',
+        monitor: 'desktop',
+        keyboard: 'keyboard',
+        mouse: 'mouse',
+        headset: 'headphones'
+    };
+    return icons[assetType] || 'laptop';
+}
+
+// Quick action functions
+function checkLeaveBalance() {
+    if (!currentEmployeeId) {
+        showNotification('Please select an employee first', 'warning');
+        return;
+    }
+    
+    addMessageToChat(`What is my leave balance for ${currentEmployeeId}?`, 'user');
+    socket.emit('chat_message', {
+        message: 'What is my leave balance?',
+        employee_id: currentEmployeeId
+    });
+    
+    if (!chatOpen) {
+        toggleChat();
+    }
+}
+
+function viewMyAssets() {
+    if (!currentEmployeeId) {
+        showNotification('Please select an employee first', 'warning');
+        return;
+    }
+    
+    refreshEmployeeData();
+    showNotification('Asset information updated', 'info');
+}
+
+function contactHR() {
+    addMessageToChat('I need to contact HR for assistance', 'user');
+    socket.emit('chat_message', {
+        message: 'I need to contact HR',
+        employee_id: currentEmployeeId
+    });
+    
+    if (!chatOpen) {
+        toggleChat();
+    }
+}
+
+function sendSuggestedMessage(message) {
+    if (!currentEmployeeId) {
+        showNotification('Please select an employee first', 'warning');
+        return;
+    }
+    
+    addMessageToChat(message, 'user');
+    socket.emit('chat_message', {
+        message: message,
+        employee_id: currentEmployeeId
+    });
+    
+    if (!chatOpen) {
+        toggleChat();
+    }
+}
+</script>
+{% endblock %}

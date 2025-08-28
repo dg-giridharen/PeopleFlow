@@ -1,0 +1,183 @@
+{
+  "assets": [
+    {
+      "asset_id": "LAP001",
+      "asset_type": "laptop",
+      "brand": "Dell",
+      "model": "XPS 15",
+      "specifications": "Intel i7, 16GB RAM, 512GB SSD",
+      "status": "assigned",
+      "assigned_to": "EMP003",
+      "purchase_date": "2023-01-15",
+      "warranty_expiry": "2026-01-15"
+    },
+    {
+      "asset_id": "LAP002",
+      "asset_type": "laptop",
+      "brand": "MacBook",
+      "model": "MacBook Pro 16",
+      "specifications": "M2 Pro, 32GB RAM, 1TB SSD",
+      "status": "assigned",
+      "assigned_to": "EMP010",
+      "purchase_date": "2023-02-20",
+      "warranty_expiry": "2026-02-20"
+    },
+    {
+      "asset_id": "LAP003",
+      "asset_type": "laptop",
+      "brand": "Lenovo",
+      "model": "ThinkPad X1 Carbon",
+      "specifications": "Intel i7, 16GB RAM, 256GB SSD",
+      "status": "assigned",
+      "assigned_to": "EMP001",
+      "purchase_date": "2023-01-10",
+      "warranty_expiry": "2026-01-10"
+    },
+    {
+      "asset_id": "LAP004",
+      "asset_type": "laptop",
+      "brand": "Dell",
+      "model": "XPS 13",
+      "specifications": "Intel i5, 8GB RAM, 256GB SSD",
+      "status": "assigned",
+      "assigned_to": "EMP004",
+      "purchase_date": "2023-03-05",
+      "warranty_expiry": "2026-03-05"
+    },
+    {
+      "asset_id": "MON001",
+      "asset_type": "monitor",
+      "brand": "Dell",
+      "model": "UltraSharp 27",
+      "specifications": "27-inch 4K USB-C",
+      "status": "assigned",
+      "assigned_to": "EMP010",
+      "purchase_date": "2023-01-20",
+      "warranty_expiry": "2026-01-20"
+    },
+    {
+      "asset_id": "MON002",
+      "asset_type": "monitor",
+      "brand": "LG",
+      "model": "UltraWide 34",
+      "specifications": "34-inch Curved Ultrawide",
+      "status": "assigned",
+      "assigned_to": "EMP002",
+      "purchase_date": "2023-02-15",
+      "warranty_expiry": "2026-02-15"
+    },
+    {
+      "asset_id": "MON003",
+      "asset_type": "monitor",
+      "brand": "Samsung",
+      "model": "Odyssey G7",
+      "specifications": "32-inch Gaming Monitor",
+      "status": "assigned",
+      "assigned_to": "EMP003",
+      "purchase_date": "2023-03-10",
+      "warranty_expiry": "2026-03-10"
+    },
+    {
+      "asset_id": "KEY001",
+      "asset_type": "keyboard",
+      "brand": "Logitech",
+      "model": "MX Keys",
+      "specifications": "Wireless Mechanical",
+      "status": "assigned",
+      "assigned_to": "EMP010",
+      "purchase_date": "2023-01-25",
+      "warranty_expiry": "2025-01-25"
+    },
+    {
+      "asset_id": "KEY002",
+      "asset_type": "keyboard",
+      "brand": "Apple",
+      "model": "Magic Keyboard",
+      "specifications": "Wireless with Touch ID",
+      "status": "assigned",
+      "assigned_to": "EMP003",
+      "purchase_date": "2023-02-28",
+      "warranty_expiry": "2025-02-28"
+    },
+    {
+      "asset_id": "MOU001",
+      "asset_type": "mouse",
+      "brand": "Logitech",
+      "model": "MX Master 3",
+      "specifications": "Wireless Ergonomic",
+      "status": "assigned",
+      "assigned_to": "EMP010",
+      "purchase_date": "2023-01-30",
+      "warranty_expiry": "2025-01-30"
+    },
+    {
+      "asset_id": "MOU002",
+      "asset_type": "mouse",
+      "brand": "Apple",
+      "model": "Magic Mouse",
+      "specifications": "Wireless Multi-Touch",
+      "status": "assigned",
+      "assigned_to": "EMP003",
+      "purchase_date": "2023-03-01",
+      "warranty_expiry": "2025-03-01"
+    },
+    {
+      "asset_id": "HEAD001",
+      "asset_type": "headset",
+      "brand": "Sony",
+      "model": "WH-1000XM4",
+      "specifications": "Noise Cancelling Wireless",
+      "status": "assigned",
+      "assigned_to": "EMP005",
+      "purchase_date": "2023-02-10",
+      "warranty_expiry": "2025-02-10"
+    }
+  ],
+  "role_asset_rules": {
+    "Software Engineer": [
+      "laptop",
+      "monitor",
+      "keyboard",
+      "mouse"
+    ],
+    "Data Scientist": [
+      "laptop",
+      "monitor",
+      "keyboard",
+      "mouse"
+    ],
+    "Product Manager": [
+      "laptop",
+      "monitor"
+    ],
+    "HR Specialist": [
+      "laptop",
+      "monitor"
+    ],
+    "Engineering Manager": [
+      "laptop",
+      "monitor",
+      "headset"
+    ],
+    "Product Director": [
+      "laptop",
+      "monitor",
+      "headset"
+    ],
+    "Analytics Manager": [
+      "laptop",
+      "monitor",
+      "headset"
+    ],
+    "HR Director": [
+      "laptop",
+      "monitor",
+      "headset"
+    ],
+    "VP Engineering": [
+      "laptop",
+      "monitor",
+      "headset"
+    ]
+  }
+}

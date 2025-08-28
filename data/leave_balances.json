@@ -1,0 +1,81 @@
+{
+  "leave_balances": [
+    {
+      "employee_id": "EMP001",
+      "annual_leave": 17,
+      "sick_leave": 10,
+      "personal_leave": 3,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP002",
+      "annual_leave": 18,
+      "sick_leave": 12,
+      "personal_leave": 7,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP003",
+      "annual_leave": 15,
+      "sick_leave": 10,
+      "personal_leave": 5,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP004",
+      "annual_leave": 22,
+      "sick_leave": 11,
+      "personal_leave": 6,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP005",
+      "annual_leave": 28,
+      "sick_leave": 15,
+      "personal_leave": 8,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP006",
+      "annual_leave": 30,
+      "sick_leave": 15,
+      "personal_leave": 10,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP007",
+      "annual_leave": 26,
+      "sick_leave": 13,
+      "personal_leave": 8,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP008",
+      "annual_leave": 32,
+      "sick_leave": 16,
+      "personal_leave": 12,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP009",
+      "annual_leave": 35,
+      "sick_leave": 20,
+      "personal_leave": 15,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP010",
+      "annual_leave": 20,
+      "sick_leave": 10,
+      "personal_leave": 5,
+      "year": 2025
+    },
+    {
+      "employee_id": "EMP999",
+      "annual_leave": 20,
+      "sick_leave": 10,
+      "personal_leave": 5,
+      "year": 2025
+    }
+  ]
+}

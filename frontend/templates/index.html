@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AI-Powered HR Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-tachometer-alt me-2"></i>
+            HR Dashboard
+        </h1>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="quick-stats mb-4">
+    <div class="stat-card">
+        <div class="stat-number" id="totalEmployees">-</div>
+        <div class="stat-label">Total Employees</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-number" id="activeEmployees">-</div>
+        <div class="stat-label">Active Employees</div>
+    </div>
+    <div class="stat-card info">
+        <div class="stat-number" id="totalAssets">-</div>
+        <div class="stat-label">Total Assets</div>
+    </div>
+    <div class="stat-card warning">
+        <div class="stat-number" id="availableAssets">-</div>
+        <div class="stat-label">Available Assets</div>
+    </div>
+    <div class="stat-card danger">
+        <div class="stat-number" id="assetUtilization">-</div>
+        <div class="stat-label">Asset Utilization</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" id="avgAnnualLeave">-</div>
+        <div class="stat-label">Avg Annual Leave</div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Employees Table -->
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-users me-2"></i>
+                    Employees
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody">
+                            <!-- Employee data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leave Balance Chart -->
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-pie me-2"></i>
+                    Leave Distribution
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="leaveChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Assets Table -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-laptop me-2"></i>
+                    Assets
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Asset ID</th>
+                                <th>Type</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetTableBody">
+                            <!-- Asset data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Modal -->
+<div class="modal fade" id="quickActionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Quick Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-primary w-100 mb-3" onclick="openLeaveRequestModal()">
+                            <i class="fas fa-calendar-plus me-2"></i>
+                            New Leave Request
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-success w-100 mb-3" onclick="openAssetProvisionModal()">
+                            <i class="fas fa-laptop me-2"></i>
+                            Provision Assets
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<button class="btn btn-primary position-fixed" style="bottom: 100px; right: 20px; border-radius: 50%; width: 60px; height: 60px; z-index: 999;" data-bs-toggle="modal" data-bs-target="#quickActionModal">
+    <i class="fas fa-plus"></i>
+</button>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Dashboard-specific JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh dashboard every 30 seconds
+    setInterval(refreshData, 30000);
+});
+
+function openLeaveRequestModal() {
+    // Redirect to employee portal for leave request
+    window.location.href = '/employee';
+}
+
+function openAssetProvisionModal() {
+    // Redirect to admin panel for asset provisioning
+    window.location.href = '/admin';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,2836 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - AI-Powered HR Assistant{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Enhanced Dashboard Styles */
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid #667eea;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+
+    .stat-card.success { border-left-color: #10b981; }
+    .stat-card.warning { border-left-color: #f59e0b; }
+    .stat-card.danger { border-left-color: #ef4444; }
+    .stat-card.info { border-left-color: #3b82f6; }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+    }
+
+    .stat-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 2rem;
+        opacity: 0.3;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .chart-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #1e293b;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .table-enhanced {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .table-enhanced thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+        padding: 1rem;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .table-enhanced tbody td {
+        padding: 1rem;
+        border-color: #e2e8f0;
+        vertical-align: middle;
+    }
+
+    .table-enhanced tbody tr:hover {
+        background-color: rgba(102, 126, 234, 0.05);
+    }
+
+    .status-badge {
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .status-active { background: #dcfce7; color: #166534; }
+    .status-inactive { background: #fee2e2; color: #991b1b; }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-available { background: #dbeafe; color: #1e40af; }
+    .status-assigned { background: #f3e8ff; color: #7c3aed; }
+
+    .modal-enhanced .modal-content {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .modal-enhanced .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 1rem 1rem 0 0;
+        padding: 1.5rem;
+    }
+
+    .search-filter-bar {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .quick-action-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .quick-action-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        display: none;
+    }
+
+    .loading-spinner {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-2">Processing...</div>
+    </div>
+</div>
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="fas fa-tachometer-alt me-2"></i>
+                HR Admin Dashboard
+            </h1>
+            <p class="mb-0 opacity-90">Comprehensive employee and asset management system</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex align-items-center justify-content-md-end">
+                <span class="badge bg-success fs-6 px-3 py-2 me-2">
+                    <i class="fas fa-circle me-1"></i>
+                    System Online
+                </span>
+                <div class="position-relative">
+                    <button class="btn btn-light btn-sm" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationCount">3</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Statistics Grid -->
+<div class="stats-grid">
+    <div class="stat-card position-relative">
+        <i class="fas fa-users stat-icon"></i>
+        <div class="stat-number" id="adminTotalEmployees">-</div>
+        <div class="stat-label">Total Employees</div>
+    </div>
+    <div class="stat-card success position-relative">
+        <i class="fas fa-user-check stat-icon"></i>
+        <div class="stat-number" id="adminActiveEmployees">-</div>
+        <div class="stat-label">Active Employees</div>
+    </div>
+    <div class="stat-card info position-relative">
+        <i class="fas fa-laptop stat-icon"></i>
+        <div class="stat-number" id="adminTotalAssets">-</div>
+        <div class="stat-label">Total Assets</div>
+    </div>
+    <div class="stat-card warning position-relative">
+        <i class="fas fa-box stat-icon"></i>
+        <div class="stat-number" id="adminAvailableAssets">-</div>
+        <div class="stat-label">Available Assets</div>
+    </div>
+    <div class="stat-card danger position-relative">
+        <i class="fas fa-clock stat-icon"></i>
+        <div class="stat-number" id="pendingRequests">-</div>
+        <div class="stat-label">Pending Requests</div>
+    </div>
+    <div class="stat-card position-relative">
+        <i class="fas fa-calendar-alt stat-icon"></i>
+        <div class="stat-number" id="leaveRequests">-</div>
+        <div class="stat-label">Leave Requests</div>
+    </div>
+</div>
+
+<!-- Quick Actions Grid -->
+<div class="quick-actions">
+    <div class="quick-action-card" onclick="showOnboardingModal()">
+        <i class="fas fa-user-plus fa-2x text-success mb-2"></i>
+        <h6>New Employee</h6>
+        <small class="text-muted">Start onboarding process</small>
+    </div>
+    <div class="quick-action-card" onclick="showOffboardingModal()">
+        <i class="fas fa-user-minus fa-2x text-danger mb-2"></i>
+        <h6>Employee Exit</h6>
+        <small class="text-muted">Process departure</small>
+    </div>
+    <div class="quick-action-card" onclick="showAssetProvisionModal()">
+        <i class="fas fa-laptop fa-2x text-info mb-2"></i>
+        <h6>Provision Assets</h6>
+        <small class="text-muted">Assign equipment</small>
+    </div>
+    <div class="quick-action-card" onclick="showLeaveApprovalModal()">
+        <i class="fas fa-calendar-check fa-2x text-warning mb-2"></i>
+        <h6>Leave Approvals</h6>
+        <small class="text-muted">Review requests</small>
+    </div>
+    <div class="quick-action-card" onclick="showUserManagementModal()">
+        <i class="fas fa-users-cog fa-2x text-primary mb-2"></i>
+        <h6>User Management</h6>
+        <small class="text-muted">Manage HR staff</small>
+    </div>
+    <div class="quick-action-card" onclick="showPolicyManagementModal()">
+        <i class="fas fa-file-alt fa-2x text-secondary mb-2"></i>
+        <h6>Policy Documents</h6>
+        <small class="text-muted">Update RAG system</small>
+    </div>
+</div>
+
+<!-- Analytics Charts Section -->
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-chart-line me-2"></i>
+                Employee Growth Trend
+            </div>
+            <canvas id="employeeGrowthChart" height="100"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-chart-pie me-2"></i>
+                Department Distribution
+            </div>
+            <canvas id="departmentChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-calendar-alt me-2"></i>
+                Leave Trends (Last 6 Months)
+            </div>
+            <canvas id="leaveTrendsChart" height="150"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-laptop me-2"></i>
+                Asset Utilization
+            </div>
+            <canvas id="assetUtilizationChart" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Asset Provisioning -->
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-laptop me-2"></i>
+                    Asset Provisioning
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="assetProvisionForm">
+                    <div class="mb-3">
+                        <label for="provisionEmployeeId" class="form-label">Employee ID</label>
+                        <select class="form-select" id="provisionEmployeeId" name="employee_id" required>
+                            <option value="">Select Employee</option>
+                            <option value="EMP001">EMP001 - John Smith</option>
+                            <option value="EMP002">EMP002 - Sarah Johnson</option>
+                            <option value="EMP003">EMP003 - Mike Chen</option>
+                            <option value="EMP004">EMP004 - Emily Davis</option>
+                            <option value="EMP005">EMP005 - David Wilson</option>
+                            <option value="EMP006">EMP006 - Lisa Brown</option>
+                            <option value="EMP007">EMP007 - Robert Taylor</option>
+                            <option value="EMP008">EMP008 - Jennifer Martinez</option>
+                            <option value="EMP009">EMP009 - Alex Thompson</option>
+                            <option value="EMP010">EMP010 - Maria Garcia</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>
+                        Provision Assets
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Bulk Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-tasks me-2"></i>
+                    Bulk Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-outline-primary w-100 mb-2" onclick="refreshAllData()">
+                            <i class="fas fa-sync me-2"></i>
+                            Refresh Data
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-info w-100 mb-2" onclick="exportData()">
+                            <i class="fas fa-download me-2"></i>
+                            Export Data
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-outline-warning w-100" onclick="generateReport()">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Generate Report
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-success w-100" onclick="backupData()">
+                            <i class="fas fa-save me-2"></i>
+                            Backup Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Status -->
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-server me-2"></i>
+                    System Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-database fa-2x text-success mb-2"></i>
+                            <h6>Database</h6>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-robot fa-2x text-success mb-2"></i>
+                            <h6>AI Assistant</h6>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-users fa-2x text-info mb-2"></i>
+                            <h6>Active Users</h6>
+                            <span class="badge bg-info">5</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <h6>Uptime</h6>
+                            <span class="badge bg-warning">24h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>
+                    Recent Activity
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="recentActivity">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-calendar-check text-success me-3"></i>
+                        <div>
+                            <strong>Leave Approved</strong><br>
+                            <small class="text-muted">EMP001 - 3 days annual leave</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-laptop text-info me-3"></i>
+                        <div>
+                            <strong>Assets Assigned</strong><br>
+                            <small class="text-muted">EMP003 - 4 items provisioned</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-plus text-primary me-3"></i>
+                        <div>
+                            <strong>New Employee</strong><br>
+                            <small class="text-muted">EMP010 - Maria Garcia added</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Advanced Management Tables -->
+<div class="row">
+    <!-- Employee Management -->
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-users me-2"></i>
+                    Employee Management
+                </h5>
+                <div class="action-buttons">
+                    <button class="btn btn-outline-info btn-sm" onclick="exportEmployeeData()">
+                        <i class="fas fa-download me-1"></i>
+                        Export
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="showOnboardingModal()">
+                        <i class="fas fa-plus me-1"></i>
+                        Add Employee
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="search-filter-bar">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="employeeSearch"
+                                   placeholder="Search employees..." onkeyup="filterEmployees()">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="departmentFilter" onchange="filterEmployees()">
+                            <option value="">All Departments</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="HR">HR</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Finance">Finance</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="statusFilter" onchange="filterEmployees()">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="roleFilter" onchange="filterEmployees()">
+                            <option value="">All Roles</option>
+                            <option value="Software Engineer">Software Engineer</option>
+                            <option value="Product Manager">Product Manager</option>
+                            <option value="HR Manager">HR Manager</option>
+                            <option value="Sales Rep">Sales Rep</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="clearFilters()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="bulkActions()">
+                                <i class="fas fa-tasks"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-enhanced" id="employeeTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAllEmployees" onchange="toggleSelectAll('employees')">
+                                </th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Hire Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminEmployeeTableBody">
+                            <!-- Employee data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Employee pagination">
+                    <ul class="pagination justify-content-center" id="employeePagination">
+                        <!-- Pagination will be generated here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Asset Management -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-laptop me-2"></i>
+                    Asset Management & Tracking
+                </h5>
+                <div class="action-buttons">
+                    <button class="btn btn-outline-warning btn-sm" onclick="showAssetReturnModal()">
+                        <i class="fas fa-undo me-1"></i>
+                        Process Returns
+                    </button>
+                    <button class="btn btn-outline-info btn-sm" onclick="exportAssetData()">
+                        <i class="fas fa-download me-1"></i>
+                        Export
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="showAssetProvisionModal()">
+                        <i class="fas fa-plus me-1"></i>
+                        Add Asset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Asset Search and Filter Bar -->
+            <div class="search-filter-bar">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="assetSearch"
+                                   placeholder="Search assets..." onkeyup="filterAssets()">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="assetTypeFilter" onchange="filterAssets()">
+                            <option value="">All Types</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="monitor">Monitor</option>
+                            <option value="phone">Phone</option>
+                            <option value="keyboard">Keyboard</option>
+                            <option value="mouse">Mouse</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="assetStatusFilter" onchange="filterAssets()">
+                            <option value="">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="assigned">Assigned</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="retired">Retired</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="assetAssigneeFilter" onchange="filterAssets()">
+                            <option value="">All Assignees</option>
+                            <option value="unassigned">Unassigned</option>
+                            <!-- Employee options will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="clearAssetFilters()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="bulkAssetActions()">
+                                <i class="fas fa-tasks"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-enhanced" id="assetTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAllAssets" onchange="toggleSelectAll('assets')">
+                                </th>
+                                <th>Asset ID</th>
+                                <th>Type</th>
+                                <th>Brand/Model</th>
+                                <th>Serial Number</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Assignment Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminAssetTableBody">
+                            <!-- Asset data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Asset Pagination -->
+                <nav aria-label="Asset pagination">
+                    <ul class="pagination justify-content-center" id="assetPagination">
+                        <!-- Pagination will be generated here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Add Employee Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Add New Employee
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEmployeeForm" novalidate>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="newEmployeeId" class="form-label">Employee ID *</label>
+                                <input type="text" class="form-control" id="newEmployeeId" name="employee_id"
+                                       placeholder="EMP001" pattern="^EMP\d{3}$" required>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                                <small class="form-text text-muted">Format: EMP001, EMP002, etc.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="newEmployeeName" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="newEmployeeName" name="name"
+                                       placeholder="John Doe" required>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="newEmployeeEmail" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="newEmployeeEmail" name="email"
+                                       placeholder="john.doe@company.com" required>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="newEmployeeHireDate" class="form-label">Hire Date</label>
+                                <input type="date" class="form-control" id="newEmployeeHireDate" name="hire_date">
+                                <small class="form-text text-muted">Leave blank for today's date</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="newEmployeeRole" class="form-label">Role *</label>
+                                <select class="form-select" id="newEmployeeRole" name="role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="Software Engineer">Software Engineer</option>
+                                    <option value="Senior Software Engineer">Senior Software Engineer</option>
+                                    <option value="Data Scientist">Data Scientist</option>
+                                    <option value="Product Manager">Product Manager</option>
+                                    <option value="HR Specialist">HR Specialist</option>
+                                    <option value="Engineering Manager">Engineering Manager</option>
+                                    <option value="QA Engineer">QA Engineer</option>
+                                    <option value="DevOps Engineer">DevOps Engineer</option>
+                                </select>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="newEmployeeDepartment" class="form-label">Department *</label>
+                                <select class="form-select" id="newEmployeeDepartment" name="department" required>
+                                    <option value="">Select Department</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Product">Product</option>
+                                    <option value="Analytics">Analytics</option>
+                                    <option value="Human Resources">Human Resources</option>
+                                    <option value="Quality Assurance">Quality Assurance</option>
+                                    <option value="Operations">Operations</option>
+                                </select>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="newEmployeeManager" class="form-label">Manager</label>
+                                <select class="form-select" id="newEmployeeManager" name="manager_id">
+                                    <option value="">Select Manager (Optional)</option>
+                                    <!-- Manager options will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="newEmployeeStatus" class="form-label">Status</label>
+                                <select class="form-select" id="newEmployeeStatus" name="status">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" onclick="submitEmployeeForm()">
+                    <i class="fas fa-save me-2"></i>Add Employee
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Employee Modal -->
+<div class="modal fade" id="editEmployeeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-edit me-2"></i>
+                    Edit Employee
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editEmployeeForm" novalidate>
+                    <input type="hidden" id="editEmployeeId" name="employee_id">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editEmployeeIdDisplay" class="form-label">Employee ID</label>
+                                <input type="text" class="form-control" id="editEmployeeIdDisplay" readonly>
+                                <small class="form-text text-muted">Employee ID cannot be changed</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="editEmployeeName" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="editEmployeeName" name="name" required>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="editEmployeeEmail" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="editEmployeeEmail" name="email" required>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editEmployeeHireDate" class="form-label">Hire Date</label>
+                                <input type="date" class="form-control" id="editEmployeeHireDate" readonly>
+                                <small class="form-text text-muted">Hire date cannot be changed</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="editEmployeeRole" class="form-label">Role *</label>
+                                <select class="form-select" id="editEmployeeRole" name="role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="Software Engineer">Software Engineer</option>
+                                    <option value="Senior Software Engineer">Senior Software Engineer</option>
+                                    <option value="Data Scientist">Data Scientist</option>
+                                    <option value="Product Manager">Product Manager</option>
+                                    <option value="HR Specialist">HR Specialist</option>
+                                    <option value="Engineering Manager">Engineering Manager</option>
+                                    <option value="QA Engineer">QA Engineer</option>
+                                    <option value="DevOps Engineer">DevOps Engineer</option>
+                                </select>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group has-validation">
+                                <label for="editEmployeeDepartment" class="form-label">Department *</label>
+                                <select class="form-select" id="editEmployeeDepartment" name="department" required>
+                                    <option value="">Select Department</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Product">Product</option>
+                                    <option value="Analytics">Analytics</option>
+                                    <option value="Human Resources">Human Resources</option>
+                                    <option value="Quality Assurance">Quality Assurance</option>
+                                    <option value="Operations">Operations</option>
+                                </select>
+                                <div class="validation-indicator"></div>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editEmployeeManager" class="form-label">Manager</label>
+                                <select class="form-select" id="editEmployeeManager" name="manager_id">
+                                    <option value="">Select Manager (Optional)</option>
+                                    <!-- Manager options will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editEmployeeStatus" class="form-label">Status</label>
+                                <select class="form-select" id="editEmployeeStatus" name="status">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" onclick="updateEmployeeForm()">
+                    <i class="fas fa-save me-2"></i>Update Employee
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Asset Modal -->
+<div class="modal fade" id="addAssetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Asset</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAssetForm">
+                    <div class="mb-3">
+                        <label for="newAssetId" class="form-label">Asset ID</label>
+                        <input type="text" class="form-control" id="newAssetId" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newAssetType" class="form-label">Asset Type</label>
+                        <select class="form-select" id="newAssetType" required>
+                            <option value="">Select Type</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="monitor">Monitor</option>
+                            <option value="keyboard">Keyboard</option>
+                            <option value="mouse">Mouse</option>
+                            <option value="headset">Headset</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newAssetBrand" class="form-label">Brand</label>
+                        <input type="text" class="form-control" id="newAssetBrand" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newAssetModel" class="form-label">Model</label>
+                        <input type="text" class="form-control" id="newAssetModel" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newAssetSpecs" class="form-label">Specifications</label>
+                        <textarea class="form-control" id="newAssetSpecs" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="addAsset()">Add Asset</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Onboarding Modal -->
+<div class="modal fade modal-enhanced" id="onboardingModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Employee Onboarding Workflow
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <form id="onboardingForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Employee ID *</label>
+                                        <input type="text" class="form-control" name="employee_id" placeholder="EMP001" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Department *</label>
+                                        <select class="form-select" name="department" required>
+                                            <option value="">Select Department</option>
+                                            <option value="Engineering">Engineering</option>
+                                            <option value="HR">HR</option>
+                                            <option value="Sales">Sales</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="Finance">Finance</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Role *</label>
+                                        <input type="text" class="form-control" name="role" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Start Date *</label>
+                                        <input type="date" class="form-control" name="hire_date" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Manager</label>
+                                <select class="form-select" name="manager_id">
+                                    <option value="">Select Manager</option>
+                                    <!-- Will be populated dynamically -->
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Onboarding Checklist</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="task1" checked disabled>
+                                    <label class="form-check-label" for="task1">Create employee record</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="task2">
+                                    <label class="form-check-label" for="task2">Provision IT assets</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="task3">
+                                    <label class="form-check-label" for="task3">Setup email account</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="task4">
+                                    <label class="form-check-label" for="task4">Send welcome email</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="task5">
+                                    <label class="form-check-label" for="task5">Schedule orientation</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="processOnboarding()">
+                    <i class="fas fa-play me-2"></i>Start Onboarding
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Offboarding Modal -->
+<div class="modal fade modal-enhanced" id="offboardingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-minus me-2"></i>
+                    Employee Offboarding Process
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="offboardingForm">
+                    <div class="mb-3">
+                        <label class="form-label">Select Employee *</label>
+                        <select class="form-select" name="employee_id" required id="offboardingEmployeeSelect">
+                            <option value="">Choose employee to offboard</option>
+                            <!-- Will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Working Day *</label>
+                        <input type="date" class="form-control" name="last_day" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Leaving</label>
+                        <select class="form-select" name="reason">
+                            <option value="">Select reason</option>
+                            <option value="resignation">Resignation</option>
+                            <option value="termination">Termination</option>
+                            <option value="retirement">Retirement</option>
+                            <option value="contract_end">Contract End</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" name="notes" rows="3" placeholder="Any additional information..."></textarea>
+                    </div>
+                </form>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Offboarding will:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Deactivate employee account</li>
+                        <li>Process asset returns</li>
+                        <li>Send exit interview email</li>
+                        <li>Update employee status to inactive</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="processOffboarding()">
+                    <i class="fas fa-user-times me-2"></i>Process Offboarding
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Asset Return Modal -->
+<div class="modal fade modal-enhanced" id="assetReturnModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-undo me-2"></i>
+                    Process Asset Returns
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assetReturnForm">
+                    <div class="mb-3">
+                        <label class="form-label">Employee *</label>
+                        <select class="form-select" name="employee_id" required id="returnEmployeeSelect" onchange="loadEmployeeAssets(this.value)">
+                            <option value="">Select employee</option>
+                            <!-- Will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assets to Return</label>
+                        <div id="employeeAssetsList" class="border rounded p-3">
+                            <p class="text-muted">Select an employee to view their assigned assets</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Return Date</label>
+                        <input type="date" class="form-control" name="return_date" value="">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Condition Notes</label>
+                        <textarea class="form-control" name="condition_notes" rows="3" placeholder="Note the condition of returned assets..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="processAssetReturn()">
+                    <i class="fas fa-check me-2"></i>Process Return
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leave Approval Modal -->
+<div class="modal fade modal-enhanced" id="leaveApprovalModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-check me-2"></i>
+                    Leave Request Approvals
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-enhanced">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Days</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingLeaveRequests">
+                            <!-- Pending leave requests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="approveAllLeave()">
+                    <i class="fas fa-check-double me-2"></i>Approve All
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Management Modal -->
+<div class="modal fade modal-enhanced" id="userManagementModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-users-cog me-2"></i>
+                    HR Staff User Management
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <h6>Current HR Staff</h6>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-primary btn-sm" onclick="showAddUserForm()">
+                            <i class="fas fa-plus me-1"></i>Add User
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Last Login</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hrStaffList">
+                            <tr>
+                                <td>admin</td>
+                                <td><span class="status-badge status-active">Admin</span></td>
+                                <td>2024-01-15 09:30</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editUser('admin')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>hr_manager</td>
+                                <td><span class="status-badge status-pending">HR Manager</span></td>
+                                <td>2024-01-14 16:45</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editUser('hr_manager')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deactivateUser('hr_manager')">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add User Form (Initially Hidden) -->
+                <div id="addUserForm" style="display: none;">
+                    <hr>
+                    <h6>Add New HR Staff User</h6>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Username *</label>
+                                    <input type="text" class="form-control" name="username" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Role *</label>
+                                    <select class="form-select" name="role" required>
+                                        <option value="">Select Role</option>
+                                        <option value="hr_admin">HR Admin</option>
+                                        <option value="hr_manager">HR Manager</option>
+                                        <option value="hr_staff">HR Staff</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Temporary Password *</label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary me-2" onclick="hideAddUserForm()">Cancel</button>
+                            <button type="button" class="btn btn-success" onclick="createHRUser()">Create User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Policy Management Modal -->
+<div class="modal fade modal-enhanced" id="policyManagementModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Policy Document Management
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Current Policy Documents</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Document</th>
+                                                <th>Last Updated</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Work From Home Policy</td>
+                                                <td>2024-01-10</td>
+                                                <td><span class="status-badge status-active">Active</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="editPolicy('wfh')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePolicy('wfh')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Expense Reimbursement</td>
+                                                <td>2024-01-08</td>
+                                                <td><span class="status-badge status-active">Active</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="editPolicy('expense')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePolicy('expense')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Code of Conduct</td>
+                                                <td>2024-01-05</td>
+                                                <td><span class="status-badge status-active">Active</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="editPolicy('conduct')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePolicy('conduct')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Leave Policy</td>
+                                                <td>2024-01-03</td>
+                                                <td><span class="status-badge status-active">Active</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="editPolicy('leave')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePolicy('leave')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Upload New Policy</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="policyUploadForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Policy Name *</label>
+                                        <input type="text" class="form-control" name="policy_name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Category</label>
+                                        <select class="form-select" name="category">
+                                            <option value="hr">HR Policies</option>
+                                            <option value="it">IT Policies</option>
+                                            <option value="finance">Finance Policies</option>
+                                            <option value="general">General Policies</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Document File</label>
+                                        <input type="file" class="form-control" name="policy_file" accept=".pdf,.doc,.docx,.txt,.md">
+                                        <small class="form-text text-muted">Supported: PDF, DOC, DOCX, TXT, MD</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Or Enter Text Content</label>
+                                        <textarea class="form-control" name="policy_content" rows="8" placeholder="Enter policy content directly..."></textarea>
+                                    </div>
+                                    <button type="button" class="btn btn-success w-100" onclick="uploadPolicyDocument()">
+                                        <i class="fas fa-upload me-2"></i>Upload Policy
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">RAG System Status</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-database text-success me-2"></i>
+                                    <span>Vector Store: <strong>Active</strong></span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-file-alt text-info me-2"></i>
+                                    <span>Documents: <strong>4 indexed</strong></span>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-sync text-warning me-2"></i>
+                                    <span>Last Update: <strong>2 hours ago</strong></span>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm w-100" onclick="rebuildRAGIndex()">
+                                    <i class="fas fa-sync me-2"></i>Rebuild Index
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" onclick="testPolicyQuery()">
+                    <i class="fas fa-question-circle me-2"></i>Test Query
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer">
+    <!-- Toast notifications will be added here dynamically -->
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationTitle">Confirm Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="confirmationMessage">
+                Are you sure you want to proceed?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmationAction">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Admin dashboard specific JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    loadAdminData();
+    
+    // Auto-refresh admin data every 60 seconds
+    setInterval(loadAdminData, 60000);
+});
+
+async function loadAdminData() {
+    try {
+        const stats = await apiCall('/api/dashboard/stats');
+        updateAdminStats(stats);
+        
+        const employees = await apiCall('/api/employees');
+        updateAdminEmployeeTable(employees.employees);
+        
+        const assets = await apiCall('/api/assets');
+        updateAdminAssetTable(assets.assets);
+        
+    } catch (error) {
+        console.error('Failed to load admin data:', error);
+    }
+}
+
+function updateAdminStats(stats) {
+    updateStatCard('adminTotalEmployees', stats.employees.total);
+    updateStatCard('adminActiveEmployees', stats.employees.active);
+    updateStatCard('adminTotalAssets', stats.assets.total);
+    updateStatCard('adminAvailableAssets', stats.assets.available);
+    updateStatCard('pendingRequests', 5); // Mock data
+    updateStatCard('leaveRequests', 8); // Mock data
+
+    // Initialize charts
+    initializeCharts(stats);
+}
+
+// Enhanced Chart Initialization
+function initializeCharts(stats) {
+    // Employee Growth Chart
+    const growthCtx = document.getElementById('employeeGrowthChart');
+    if (growthCtx) {
+        new Chart(growthCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Employee Count',
+                    data: [45, 48, 52, 55, 58, stats.employees.total],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    // Department Distribution Chart
+    const deptCtx = document.getElementById('departmentChart');
+    if (deptCtx) {
+        new Chart(deptCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(stats.employees.by_department || {}),
+                datasets: [{
+                    data: Object.values(stats.employees.by_department || {}),
+                    backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    // Leave Trends Chart
+    const leaveCtx = document.getElementById('leaveTrendsChart');
+    if (leaveCtx) {
+        new Chart(leaveCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+                datasets: [{
+                    label: 'Leave Days',
+                    data: [120, 95, 140, 110, 85, 105],
+                    backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    // Asset Utilization Chart
+    const assetCtx = document.getElementById('assetUtilizationChart');
+    if (assetCtx) {
+        new Chart(assetCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Assigned', 'Available', 'Maintenance'],
+                datasets: [{
+                    data: [stats.assets.assigned, stats.assets.available, 3],
+                    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+}
+
+function updateAdminEmployeeTable(employees) {
+    const tbody = document.getElementById('adminEmployeeTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = employees.map(emp => `
+        <tr data-employee-id="${emp.employee_id}">
+            <td>
+                <input type="checkbox" class="employee-checkbox" value="${emp.employee_id}">
+            </td>
+            <td data-label="ID">${emp.employee_id}</td>
+            <td data-label="Name">
+                <div class="d-flex align-items-center">
+                    <div class="me-2">
+                        <i class="fas fa-user-circle fa-lg text-primary"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold">${emp.name}</div>
+                        <small class="text-muted">${emp.email}</small>
+                    </div>
+                </div>
+            </td>
+            <td data-label="Email">${emp.email}</td>
+            <td data-label="Role">
+                <span class="badge bg-info">${emp.role}</span>
+            </td>
+            <td data-label="Department">
+                <span class="badge bg-secondary">${emp.department}</span>
+            </td>
+            <td data-label="Status">
+                <span class="badge status-${emp.status}">${emp.status}</span>
+            </td>
+            <td data-label="Hire Date">${emp.hire_date}</td>
+            <td data-label="Actions">
+                <div class="table-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewEmployee('${emp.employee_id}')" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning" onclick="editEmployee('${emp.employee_id}')" title="Edit Employee">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-success" onclick="provisionAssets('${emp.employee_id}')" title="Provision Assets">
+                        <i class="fas fa-laptop"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-info" onclick="viewLeaveBalance('${emp.employee_id}')" title="Leave Balance">
+                        <i class="fas fa-calendar"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee('${emp.employee_id}')" title="Deactivate">
+                        <i class="fas fa-user-slash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    // Initialize DataTable if not already initialized
+    if (!$.fn.DataTable.isDataTable('#employeeTable')) {
+        $('#employeeTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            order: [[0, 'asc']],
+            columnDefs: [
+                { targets: -1, orderable: false, searchable: false }
+            ]
+        });
+    } else {
+        // Refresh existing DataTable
+        $('#employeeTable').DataTable().clear().rows.add($(tbody).find('tr')).draw();
+    }
+}
+
+function updateAdminAssetTable(assets) {
+    const tbody = document.getElementById('adminAssetTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = assets.map(asset => `
+        <tr>
+            <td>${asset.asset_id}</td>
+            <td>${asset.asset_type}</td>
+            <td>${asset.brand}</td>
+            <td>${asset.model}</td>
+            <td><span class="badge status-${asset.status}">${asset.status}</span></td>
+            <td>${asset.assigned_to || '-'}</td>
+            <td>${asset.purchase_date}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-info admin-action-btn" onclick="viewAssetDetails('${asset.asset_id}')">
+                    <i class="fas fa-info"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-warning admin-action-btn" onclick="editAsset('${asset.asset_id}')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                ${asset.status === 'assigned' ? 
+                    `<button class="btn btn-sm btn-outline-danger admin-action-btn" onclick="unassignAsset('${asset.asset_id}')">
+                        <i class="fas fa-unlink"></i>
+                    </button>` : 
+                    `<button class="btn btn-sm btn-outline-success admin-action-btn" onclick="assignAsset('${asset.asset_id}')">
+                        <i class="fas fa-link"></i>
+                    </button>`
+                }
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Admin action functions
+async function viewLeaveBalance(employeeId) {
+    try {
+        const balance = await apiCall(`/api/employees/${employeeId}/leave-balance`);
+        showNotification(`Leave Balance - Annual: ${balance.annual_leave}, Sick: ${balance.sick_leave}, Personal: ${balance.personal_leave}`, 'info');
+    } catch (error) {
+        showNotification('Failed to get leave balance', 'danger');
+    }
+}
+
+async function viewEmployeeAssets(employeeId) {
+    try {
+        const assets = await apiCall(`/api/employees/${employeeId}/assets`);
+        const assetCount = assets.assets.length;
+        showNotification(`Employee has ${assetCount} assigned assets`, 'info');
+    } catch (error) {
+        showNotification('Failed to get employee assets', 'danger');
+    }
+}
+
+function editEmployee(employeeId) {
+    showNotification(`Edit employee ${employeeId} - Feature coming soon`, 'info');
+}
+
+function deactivateEmployee(employeeId) {
+    if (confirm(`Are you sure you want to deactivate employee ${employeeId}?`)) {
+        showNotification(`Employee ${employeeId} deactivated - Feature coming soon`, 'warning');
+    }
+}
+
+function viewAssetDetails(assetId) {
+    showNotification(`Viewing details for asset ${assetId}`, 'info');
+}
+
+function editAsset(assetId) {
+    showNotification(`Edit asset ${assetId} - Feature coming soon`, 'info');
+}
+
+function unassignAsset(assetId) {
+    if (confirm(`Are you sure you want to unassign asset ${assetId}?`)) {
+        showNotification(`Asset ${assetId} unassigned - Feature coming soon`, 'warning');
+    }
+}
+
+function assignAsset(assetId) {
+    showNotification(`Assign asset ${assetId} - Feature coming soon`, 'info');
+}
+
+// Bulk action functions
+function refreshAllData() {
+    loadAdminData();
+    showNotification('Data refreshed successfully', 'success');
+}
+
+function exportData() {
+    showNotification('Data export started - Feature coming soon', 'info');
+}
+
+function generateReport() {
+    showNotification('Report generation started - Feature coming soon', 'info');
+}
+
+function backupData() {
+    showNotification('Data backup started - Feature coming soon', 'info');
+}
+
+// Enhanced Employee Management Functions
+async function submitEmployeeForm() {
+    const form = document.getElementById('addEmployeeForm');
+
+    if (!validateForm(form)) {
+        showNotification('Please fix the validation errors', 'danger');
+        return;
+    }
+
+    const formData = new FormData(form);
+    const employeeData = Object.fromEntries(formData.entries());
+
+    try {
+        showLoading(true);
+        const result = await apiCall('/api/employees', 'POST', employeeData);
+
+        if (result.success) {
+            showNotification('Employee added successfully!', 'success');
+
+            // Close modal and reset form
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addEmployeeModal'));
+            modal.hide();
+            form.reset();
+
+            // Refresh data
+            loadAdminData();
+        } else {
+            showNotification(result.message || 'Failed to add employee', 'danger');
+        }
+    } catch (error) {
+        showNotification('Failed to add employee', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function editEmployee(employeeId) {
+    try {
+        showLoading(true);
+        const employee = await apiCall(`/api/employees/${employeeId}`);
+
+        // Populate edit form
+        document.getElementById('editEmployeeId').value = employee.employee_id;
+        document.getElementById('editEmployeeIdDisplay').value = employee.employee_id;
+        document.getElementById('editEmployeeName').value = employee.name;
+        document.getElementById('editEmployeeEmail').value = employee.email;
+        document.getElementById('editEmployeeRole').value = employee.role;
+        document.getElementById('editEmployeeDepartment').value = employee.department;
+        document.getElementById('editEmployeeHireDate').value = employee.hire_date;
+        document.getElementById('editEmployeeManager').value = employee.manager_id || '';
+        document.getElementById('editEmployeeStatus').value = employee.status;
+
+        // Populate manager dropdown
+        await populateManagerDropdown('editEmployeeManager', employee.employee_id);
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('editEmployeeModal'));
+        modal.show();
+
+    } catch (error) {
+        showNotification('Failed to load employee details', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function updateEmployeeForm() {
+    const form = document.getElementById('editEmployeeForm');
+
+    if (!validateForm(form)) {
+        showNotification('Please fix the validation errors', 'danger');
+        return;
+    }
+
+    const formData = new FormData(form);
+    const employeeData = Object.fromEntries(formData.entries());
+    const employeeId = employeeData.employee_id;
+
+    // Remove employee_id from update data
+    delete employeeData.employee_id;
+
+    try {
+        showLoading(true);
+        const result = await apiCall(`/api/employees/${employeeId}`, 'PUT', employeeData);
+
+        if (result.success) {
+            showNotification('Employee updated successfully!', 'success');
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editEmployeeModal'));
+            modal.hide();
+
+            // Refresh data
+            loadAdminData();
+        } else {
+            showNotification(result.message || 'Failed to update employee', 'danger');
+        }
+    } catch (error) {
+        showNotification('Failed to update employee', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function deleteEmployee(employeeId) {
+    const employee = await apiCall(`/api/employees/${employeeId}`);
+
+    showConfirmationModal(
+        'Deactivate Employee',
+        `Are you sure you want to deactivate ${employee.name}? This will set their status to inactive.`,
+        async () => {
+            try {
+                showLoading(true);
+                const result = await apiCall(`/api/employees/${employeeId}`, 'DELETE');
+
+                if (result.success) {
+                    showNotification('Employee deactivated successfully', 'success');
+                    loadAdminData();
+                } else {
+                    showNotification(result.message || 'Failed to deactivate employee', 'danger');
+                }
+            } catch (error) {
+                showNotification('Failed to deactivate employee', 'danger');
+            } finally {
+                showLoading(false);
+            }
+        },
+        'warning'
+    );
+}
+
+async function populateManagerDropdown(selectId, excludeEmployeeId = null) {
+    try {
+        const employees = await apiCall('/api/employees');
+        const select = document.getElementById(selectId);
+
+        // Clear existing options except the first one
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+
+        // Add manager options (exclude current employee and inactive employees)
+        employees.employees
+            .filter(emp => emp.status === 'active' && emp.employee_id !== excludeEmployeeId)
+            .forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.employee_id;
+                option.textContent = `${emp.name} (${emp.employee_id})`;
+                select.appendChild(option);
+            });
+
+    } catch (error) {
+        console.error('Failed to populate manager dropdown:', error);
+    }
+}
+
+// Initialize manager dropdowns when modals are shown
+document.getElementById('addEmployeeModal').addEventListener('shown.bs.modal', () => {
+    populateManagerDropdown('newEmployeeManager');
+});
+
+function addAsset() {
+    const form = document.getElementById('addAssetForm');
+    const formData = new FormData(form);
+
+    // This would normally send data to the server
+    showNotification('Add asset feature coming soon', 'info');
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addAssetModal'));
+    modal.hide();
+}
+
+// ============================================================================
+// ENHANCED ADMIN DASHBOARD FUNCTIONS
+// ============================================================================
+
+// Modal Management Functions
+function showOnboardingModal() {
+    const modal = new bootstrap.Modal(document.getElementById('onboardingModal'));
+    populateManagerDropdown('onboardingForm [name="manager_id"]');
+    modal.show();
+}
+
+function showOffboardingModal() {
+    const modal = new bootstrap.Modal(document.getElementById('offboardingModal'));
+    populateEmployeeDropdown('offboardingEmployeeSelect');
+    modal.show();
+}
+
+function showAssetProvisionModal() {
+    const modal = new bootstrap.Modal(document.getElementById('assetProvisionModal'));
+    modal.show();
+}
+
+function showAssetReturnModal() {
+    const modal = new bootstrap.Modal(document.getElementById('assetReturnModal'));
+    populateEmployeeDropdown('returnEmployeeSelect');
+    modal.show();
+}
+
+function showLeaveApprovalModal() {
+    const modal = new bootstrap.Modal(document.getElementById('leaveApprovalModal'));
+    loadPendingLeaveRequests();
+    modal.show();
+}
+
+function showUserManagementModal() {
+    const modal = new bootstrap.Modal(document.getElementById('userManagementModal'));
+    modal.show();
+}
+
+function showPolicyManagementModal() {
+    const modal = new bootstrap.Modal(document.getElementById('policyManagementModal'));
+    modal.show();
+}
+
+// Enhanced Search and Filter Functions
+function filterEmployees() {
+    const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const roleFilter = document.getElementById('roleFilter').value;
+
+    const rows = document.querySelectorAll('#adminEmployeeTableBody tr');
+
+    rows.forEach(row => {
+        const name = row.querySelector('[data-label="Name"]').textContent.toLowerCase();
+        const email = row.querySelector('[data-label="Email"]').textContent.toLowerCase();
+        const department = row.querySelector('[data-label="Department"]').textContent;
+        const status = row.querySelector('[data-label="Status"]').textContent;
+        const role = row.querySelector('[data-label="Role"]').textContent;
+
+        const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
+        const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
+        const matchesStatus = !statusFilter || status.includes(statusFilter);
+        const matchesRole = !roleFilter || role.includes(roleFilter);
+
+        row.style.display = matchesSearch && matchesDepartment && matchesStatus && matchesRole ? '' : 'none';
+    });
+}
+
+function filterAssets() {
+    const searchTerm = document.getElementById('assetSearch').value.toLowerCase();
+    const typeFilter = document.getElementById('assetTypeFilter').value;
+    const statusFilter = document.getElementById('assetStatusFilter').value;
+    const assigneeFilter = document.getElementById('assetAssigneeFilter').value;
+
+    const rows = document.querySelectorAll('#adminAssetTableBody tr');
+
+    rows.forEach(row => {
+        const assetId = row.cells[1].textContent.toLowerCase();
+        const type = row.cells[2].textContent.toLowerCase();
+        const brand = row.cells[3].textContent.toLowerCase();
+        const status = row.cells[5].textContent;
+        const assignee = row.cells[6].textContent;
+
+        const matchesSearch = assetId.includes(searchTerm) || type.includes(searchTerm) || brand.includes(searchTerm);
+        const matchesType = !typeFilter || type.includes(typeFilter);
+        const matchesStatus = !statusFilter || status.includes(statusFilter);
+        const matchesAssignee = !assigneeFilter ||
+            (assigneeFilter === 'unassigned' && assignee === 'Unassigned') ||
+            (assigneeFilter !== 'unassigned' && assignee.includes(assigneeFilter));
+
+        row.style.display = matchesSearch && matchesType && matchesStatus && matchesAssignee ? '' : 'none';
+    });
+}
+
+function clearFilters() {
+    document.getElementById('employeeSearch').value = '';
+    document.getElementById('departmentFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('roleFilter').value = '';
+    filterEmployees();
+}
+
+function clearAssetFilters() {
+    document.getElementById('assetSearch').value = '';
+    document.getElementById('assetTypeFilter').value = '';
+    document.getElementById('assetStatusFilter').value = '';
+    document.getElementById('assetAssigneeFilter').value = '';
+    filterAssets();
+}
+
+// Bulk Operations
+function toggleSelectAll(type) {
+    const selectAll = document.getElementById(`selectAll${type === 'employees' ? 'Employees' : 'Assets'}`);
+    const checkboxes = document.querySelectorAll(`.${type.slice(0, -1)}-checkbox`);
+
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+}
+
+function bulkActions() {
+    const selectedEmployees = Array.from(document.querySelectorAll('.employee-checkbox:checked')).map(cb => cb.value);
+
+    if (selectedEmployees.length === 0) {
+        showNotification('Please select employees first', 'warning');
+        return;
+    }
+
+    const actions = `
+        <div class="btn-group-vertical w-100">
+            <button class="btn btn-outline-primary" onclick="bulkProvisionAssets(${JSON.stringify(selectedEmployees)})">
+                <i class="fas fa-laptop me-2"></i>Provision Assets
+            </button>
+            <button class="btn btn-outline-info" onclick="bulkSendEmail(${JSON.stringify(selectedEmployees)})">
+                <i class="fas fa-envelope me-2"></i>Send Email
+            </button>
+            <button class="btn btn-outline-warning" onclick="bulkUpdateDepartment(${JSON.stringify(selectedEmployees)})">
+                <i class="fas fa-building me-2"></i>Update Department
+            </button>
+            <button class="btn btn-outline-danger" onclick="bulkDeactivate(${JSON.stringify(selectedEmployees)})">
+                <i class="fas fa-user-times me-2"></i>Deactivate
+            </button>
+        </div>
+    `;
+
+    showCustomModal('Bulk Actions', actions);
+}
+
+function bulkAssetActions() {
+    const selectedAssets = Array.from(document.querySelectorAll('.asset-checkbox:checked')).map(cb => cb.value);
+
+    if (selectedAssets.length === 0) {
+        showNotification('Please select assets first', 'warning');
+        return;
+    }
+
+    const actions = `
+        <div class="btn-group-vertical w-100">
+            <button class="btn btn-outline-success" onclick="bulkAssignAssets(${JSON.stringify(selectedAssets)})">
+                <i class="fas fa-user-plus me-2"></i>Assign to Employee
+            </button>
+            <button class="btn btn-outline-warning" onclick="bulkMaintenanceAssets(${JSON.stringify(selectedAssets)})">
+                <i class="fas fa-tools me-2"></i>Mark for Maintenance
+            </button>
+            <button class="btn btn-outline-info" onclick="bulkUpdateAssets(${JSON.stringify(selectedAssets)})">
+                <i class="fas fa-edit me-2"></i>Update Details
+            </button>
+            <button class="btn btn-outline-danger" onclick="bulkRetireAssets(${JSON.stringify(selectedAssets)})">
+                <i class="fas fa-trash me-2"></i>Retire Assets
+            </button>
+        </div>
+    `;
+
+    showCustomModal('Bulk Asset Actions', actions);
+}
+
+// Workflow Processing Functions
+async function processOnboarding() {
+    const form = document.getElementById('onboardingForm');
+    const formData = new FormData(form);
+    const employeeData = Object.fromEntries(formData.entries());
+
+    try {
+        showLoading(true);
+
+        // Create employee
+        const createResult = await apiCall('/api/employees', 'POST', employeeData);
+        if (!createResult.success) {
+            throw new Error(createResult.message || 'Failed to create employee');
+        }
+
+        // Provision assets
+        const assetResult = await apiCall('/api/assets/provision', 'POST', {
+            employee_id: employeeData.employee_id
+        });
+
+        // Send welcome email (mock)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        showNotification('Onboarding completed successfully!', 'success');
+
+        // Close modal and refresh data
+        const modal = bootstrap.Modal.getInstance(document.getElementById('onboardingModal'));
+        modal.hide();
+        loadAdminData();
+
+    } catch (error) {
+        showNotification(error.message || 'Onboarding failed', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function processOffboarding() {
+    const form = document.getElementById('offboardingForm');
+    const formData = new FormData(form);
+    const offboardingData = Object.fromEntries(formData.entries());
+
+    try {
+        showLoading(true);
+
+        // Process asset returns
+        const returnResult = await apiCall('/api/assets/return', 'POST', {
+            employee_id: offboardingData.employee_id
+        });
+
+        // Deactivate employee
+        const deactivateResult = await apiCall(`/api/employees/${offboardingData.employee_id}`, 'DELETE');
+
+        // Send exit interview email (mock)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        showNotification('Offboarding completed successfully!', 'success');
+
+        // Close modal and refresh data
+        const modal = bootstrap.Modal.getInstance(document.getElementById('offboardingModal'));
+        modal.hide();
+        loadAdminData();
+
+    } catch (error) {
+        showNotification(error.message || 'Offboarding failed', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function processAssetReturn() {
+    const form = document.getElementById('assetReturnForm');
+    const formData = new FormData(form);
+    const returnData = Object.fromEntries(formData.entries());
+
+    const selectedAssets = Array.from(document.querySelectorAll('#employeeAssetsList input:checked')).map(cb => cb.value);
+
+    if (selectedAssets.length === 0) {
+        showNotification('Please select assets to return', 'warning');
+        return;
+    }
+
+    try {
+        showLoading(true);
+
+        for (const assetId of selectedAssets) {
+            await apiCall(`/api/assets/${assetId}/return`, 'POST', {
+                return_date: returnData.return_date,
+                condition_notes: returnData.condition_notes
+            });
+        }
+
+        showNotification(`${selectedAssets.length} assets returned successfully!`, 'success');
+
+        // Close modal and refresh data
+        const modal = bootstrap.Modal.getInstance(document.getElementById('assetReturnModal'));
+        modal.hide();
+        loadAdminData();
+
+    } catch (error) {
+        showNotification('Asset return failed', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Enhanced Notification System
+function showNotification(message, type = 'info', duration = 5000) {
+    const toastContainer = document.getElementById('toastContainer');
+    const toastId = 'toast-' + Date.now();
+
+    const toastHtml = `
+        <div class="toast align-items-center text-white bg-${type === 'danger' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'primary'} border-0"
+             role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    `;
+
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, { delay: duration });
+    toast.show();
+
+    // Remove toast element after it's hidden
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
+}
+
+function showLoading(show) {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = show ? 'flex' : 'none';
+}
+
+function showCustomModal(title, content) {
+    const modalHtml = `
+        <div class="modal fade" id="customModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">${title}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Remove existing custom modal
+    const existingModal = document.getElementById('customModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    const modal = new bootstrap.Modal(document.getElementById('customModal'));
+    modal.show();
+
+    // Clean up after modal is hidden
+    document.getElementById('customModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+// Utility Functions
+async function populateEmployeeDropdown(selectId) {
+    try {
+        const employees = await apiCall('/api/employees');
+        const select = document.getElementById(selectId);
+
+        // Clear existing options except the first one
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+
+        employees.employees
+            .filter(emp => emp.status === 'active')
+            .forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.employee_id;
+                option.textContent = `${emp.name} (${emp.employee_id})`;
+                select.appendChild(option);
+            });
+    } catch (error) {
+        console.error('Failed to populate employee dropdown:', error);
+    }
+}
+
+async function loadEmployeeAssets(employeeId) {
+    if (!employeeId) {
+        document.getElementById('employeeAssetsList').innerHTML = '<p class="text-muted">Select an employee to view their assigned assets</p>';
+        return;
+    }
+
+    try {
+        const assets = await apiCall(`/api/employees/${employeeId}/assets`);
+        const container = document.getElementById('employeeAssetsList');
+
+        if (assets.assets.length === 0) {
+            container.innerHTML = '<p class="text-muted">No assets assigned to this employee</p>';
+            return;
+        }
+
+        container.innerHTML = assets.assets.map(asset => `
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="${asset.asset_id}" id="asset-${asset.asset_id}">
+                <label class="form-check-label" for="asset-${asset.asset_id}">
+                    <strong>${asset.asset_type}</strong> - ${asset.brand} ${asset.model}
+                    <br><small class="text-muted">ID: ${asset.asset_id}</small>
+                </label>
+            </div>
+        `).join('');
+    } catch (error) {
+        document.getElementById('employeeAssetsList').innerHTML = '<p class="text-danger">Failed to load assets</p>';
+    }
+}
+
+async function loadPendingLeaveRequests() {
+    // Mock data for demonstration
+    const mockRequests = [
+        {
+            employee_id: 'EMP001',
+            employee_name: 'John Smith',
+            leave_type: 'Annual Leave',
+            start_date: '2024-02-15',
+            end_date: '2024-02-19',
+            days: 5,
+            reason: 'Family vacation',
+            status: 'pending'
+        },
+        {
+            employee_id: 'EMP003',
+            employee_name: 'Mike Chen',
+            leave_type: 'Sick Leave',
+            start_date: '2024-02-12',
+            end_date: '2024-02-12',
+            days: 1,
+            reason: 'Medical appointment',
+            status: 'pending'
+        }
+    ];
+
+    const tbody = document.getElementById('pendingLeaveRequests');
+    tbody.innerHTML = mockRequests.map(req => `
+        <tr>
+            <td>${req.employee_name}</td>
+            <td><span class="badge bg-info">${req.leave_type}</span></td>
+            <td>${req.start_date}</td>
+            <td>${req.end_date}</td>
+            <td>${req.days}</td>
+            <td>${req.reason}</td>
+            <td><span class="status-badge status-pending">${req.status}</span></td>
+            <td>
+                <button class="btn btn-sm btn-success me-1" onclick="approveLeave('${req.employee_id}')">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="rejectLeave('${req.employee_id}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Export Functions
+async function exportEmployeeData() {
+    try {
+        showLoading(true);
+        const employees = await apiCall('/api/employees');
+
+        // Convert to CSV
+        const csvContent = convertToCSV(employees.employees, [
+            'employee_id', 'name', 'email', 'role', 'department', 'status', 'hire_date'
+        ]);
+
+        downloadCSV(csvContent, 'employees.csv');
+        showNotification('Employee data exported successfully!', 'success');
+    } catch (error) {
+        showNotification('Export failed', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function exportAssetData() {
+    try {
+        showLoading(true);
+        const assets = await apiCall('/api/assets');
+
+        const csvContent = convertToCSV(assets.assets, [
+            'asset_id', 'asset_type', 'brand', 'model', 'status', 'assigned_to', 'purchase_date'
+        ]);
+
+        downloadCSV(csvContent, 'assets.csv');
+        showNotification('Asset data exported successfully!', 'success');
+    } catch (error) {
+        showNotification('Export failed', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function convertToCSV(data, headers) {
+    const csvRows = [];
+    csvRows.push(headers.join(','));
+
+    data.forEach(row => {
+        const values = headers.map(header => {
+            const value = row[header] || '';
+            return `"${value.toString().replace(/"/g, '""')}"`;
+        });
+        csvRows.push(values.join(','));
+    });
+
+    return csvRows.join('\n');
+}
+
+function downloadCSV(csvContent, filename) {
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+// Initialize enhanced features on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Set current date for date inputs
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        if (!input.value) {
+            input.value = today;
+        }
+    });
+
+    // Initialize notification count
+    updateNotificationCount();
+
+    // Load Chart.js if not already loaded
+    if (typeof Chart === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        document.head.appendChild(script);
+    }
+});
+
+function updateNotificationCount() {
+    // Mock notification count
+    document.getElementById('notificationCount').textContent = '3';
+}
+
+// Additional utility functions for completeness
+async function refreshAllData() {
+    showLoading(true);
+    try {
+        await loadAdminData();
+        showNotification('Data refreshed successfully!', 'success');
+    } catch (error) {
+        showNotification('Failed to refresh data', 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function exportReports() {
+    showCustomModal('Export Reports', `
+        <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary" onclick="exportEmployeeData()">
+                <i class="fas fa-users me-2"></i>Employee Report
+            </button>
+            <button class="btn btn-outline-success" onclick="exportAssetData()">
+                <i class="fas fa-laptop me-2"></i>Asset Report
+            </button>
+            <button class="btn btn-outline-info" onclick="exportLeaveReport()">
+                <i class="fas fa-calendar me-2"></i>Leave Report
+            </button>
+            <button class="btn btn-outline-warning" onclick="exportDashboardReport()">
+                <i class="fas fa-chart-bar me-2"></i>Dashboard Summary
+            </button>
+        </div>
+    `);
+}
+
+async function exportLeaveReport() {
+    showNotification('Leave report export feature coming soon!', 'info');
+}
+
+async function exportDashboardReport() {
+    showNotification('Dashboard report export feature coming soon!', 'info');
+}
+
+// PDF RAG System Functions
+async function uploadPolicyDocument() {
+    const form = document.getElementById('policyUploadForm');
+    const formData = new FormData(form);
+
+    const fileInput = form.querySelector('input[type="file"]');
+    const textContent = form.querySelector('textarea[name="policy_content"]').value;
+
+    if (!fileInput.files[0] && !textContent.trim()) {
+        showNotification('Please select a PDF file or enter text content', 'warning');
+        return;
+    }
+
+    try {
+        showLoading(true);
+
+        if (fileInput.files[0]) {
+            // Upload PDF file
+            const uploadFormData = new FormData();
+            uploadFormData.append('file', fileInput.files[0]);
+            uploadFormData.append('document_name', formData.get('policy_name'));
+
+            const response = await fetch('/api/policy/upload-pdf', {
+                method: 'POST',
+                body: uploadFormData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification(`Successfully uploaded ${result.document_name} with ${result.chunks_added} chunks`, 'success');
+                form.reset();
+                await checkRAGStatus();
+            } else {
+                showNotification(result.message || 'Upload failed', 'danger');
+            }
+        } else {
+            // Handle text content upload (would need additional endpoint)
+            showNotification('Text content upload feature coming soon!', 'info');
+        }
+
+    } catch (error) {
+        showNotification('Error uploading document: ' + error.message, 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function testPolicyQuery() {
+    const testQuery = prompt('Enter a test query for the policy system:');
+    if (!testQuery) return;
+
+    try {
+        showLoading(true);
+
+        const response = await fetch('/api/policy/query-enhanced', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: testQuery
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            const sources = result.sources ? result.sources.map(s => s.content.substring(0, 50) + '...').join('\n') : 'No sources';
+
+            showCustomModal('Policy Query Test Result', `
+                <div class="mb-3">
+                    <strong>Query:</strong> ${testQuery}
+                </div>
+                <div class="mb-3">
+                    <strong>Response:</strong><br>
+                    <div class="border rounded p-2 bg-light">${result.message}</div>
+                </div>
+                <div class="mb-3">
+                    <strong>Confidence:</strong> ${(result.confidence * 100).toFixed(1)}%
+                </div>
+                <div class="mb-3">
+                    <strong>Method:</strong> ${result.method || 'standard'}
+                </div>
+                <div>
+                    <strong>Sources:</strong><br>
+                    <small class="text-muted">${sources}</small>
+                </div>
+            `);
+        } else {
+            showNotification('Query test failed: ' + result.message, 'danger');
+        }
+
+    } catch (error) {
+        showNotification('Error testing query: ' + error.message, 'danger');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function rebuildRAGIndex() {
+    showNotification('RAG index rebuild feature coming soon!', 'info');
+}
+
+async function checkRAGStatus() {
+    try {
+        const response = await fetch('/api/policy/rag-status');
+        const status = await response.json();
+
+        // Update RAG status display
+        const statusContainer = document.querySelector('.card-body');
+        if (statusContainer) {
+            const statusHtml = `
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-database ${status.pdf_rag_available ? 'text-success' : 'text-danger'} me-2"></i>
+                    <span>PDF RAG: <strong>${status.pdf_rag_available ? 'Available' : 'Not Available'}</strong></span>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-link ${status.astra_db_connected ? 'text-success' : 'text-warning'} me-2"></i>
+                    <span>Astra DB: <strong>${status.astra_db_connected ? 'Connected' : 'Disconnected'}</strong></span>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-file-alt text-info me-2"></i>
+                    <span>Documents: <strong>${status.documents_indexed} indexed</strong></span>
+                </div>
+            `;
+
+            // Find and update the RAG status card
+            const ragStatusCard = document.querySelector('.card-header h6:contains("RAG System Status")');
+            if (ragStatusCard) {
+                ragStatusCard.closest('.card').querySelector('.card-body').innerHTML = statusHtml +
+                    '<button class="btn btn-outline-primary btn-sm w-100" onclick="rebuildRAGIndex()"><i class="fas fa-sync me-2"></i>Rebuild Index</button>';
+            }
+        }
+
+    } catch (error) {
+        console.error('Error checking RAG status:', error);
+    }
+}
+
+// Initialize RAG status check on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Check RAG status when policy management modal is opened
+    const policyModal = document.getElementById('policyManagementModal');
+    if (policyModal) {
+        policyModal.addEventListener('shown.bs.modal', checkRAGStatus);
+    }
+});
+</script>
+{% endblock %}

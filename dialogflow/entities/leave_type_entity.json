@@ -1,0 +1,37 @@
+{
+  "name": "leave-type",
+  "displayName": "Leave Type",
+  "kind": "KIND_MAP",
+  "entities": [
+    {
+      "value": "annual",
+      "synonyms": [
+        "annual",
+        "vacation",
+        "holiday",
+        "annual leave",
+        "vacation leave"
+      ]
+    },
+    {
+      "value": "sick",
+      "synonyms": [
+        "sick",
+        "sick leave",
+        "medical",
+        "medical leave",
+        "illness"
+      ]
+    },
+    {
+      "value": "personal",
+      "synonyms": [
+        "personal",
+        "personal leave",
+        "personal day",
+        "personal time"
+      ]
+    }
+  ],
+  "automatedExpansion": false
+}

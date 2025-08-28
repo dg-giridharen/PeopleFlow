@@ -1,0 +1,88 @@
+{
+  "name": "employee-id",
+  "displayName": "Employee ID",
+  "kind": "KIND_MAP",
+  "entities": [
+    {
+      "value": "EMP001",
+      "synonyms": [
+        "EMP001",
+        "employee 001",
+        "emp 001"
+      ]
+    },
+    {
+      "value": "EMP002",
+      "synonyms": [
+        "EMP002",
+        "employee 002",
+        "emp 002"
+      ]
+    },
+    {
+      "value": "EMP003",
+      "synonyms": [
+        "EMP003",
+        "employee 003",
+        "emp 003"
+      ]
+    },
+    {
+      "value": "EMP004",
+      "synonyms": [
+        "EMP004",
+        "employee 004",
+        "emp 004"
+      ]
+    },
+    {
+      "value": "EMP005",
+      "synonyms": [
+        "EMP005",
+        "employee 005",
+        "emp 005"
+      ]
+    },
+    {
+      "value": "EMP006",
+      "synonyms": [
+        "EMP006",
+        "employee 006",
+        "emp 006"
+      ]
+    },
+    {
+      "value": "EMP007",
+      "synonyms": [
+        "EMP007",
+        "employee 007",
+        "emp 007"
+      ]
+    },
+    {
+      "value": "EMP008",
+      "synonyms": [
+        "EMP008",
+        "employee 008",
+        "emp 008"
+      ]
+    },
+    {
+      "value": "EMP009",
+      "synonyms": [
+        "EMP009",
+        "employee 009",
+        "emp 009"
+      ]
+    },
+    {
+      "value": "EMP010",
+      "synonyms": [
+        "EMP010",
+        "employee 010",
+        "emp 010"
+      ]
+    }
+  ],
+  "automatedExpansion": true
+}

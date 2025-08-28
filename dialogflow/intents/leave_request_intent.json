@@ -1,0 +1,160 @@
+{
+  "name": "leave.request",
+  "displayName": "Leave Request",
+  "priority": 500000,
+  "trainingPhrases": [
+    {
+      "parts": [
+        {
+          "text": "I want to request leave from "
+        },
+        {
+          "text": "2024-03-15",
+          "entityType": "@sys.date",
+          "alias": "start-date"
+        },
+        {
+          "text": " to "
+        },
+        {
+          "text": "2024-03-20",
+          "entityType": "@sys.date",
+          "alias": "end-date"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "I need "
+        },
+        {
+          "text": "annual",
+          "entityType": "@leave-type",
+          "alias": "leave-type"
+        },
+        {
+          "text": " leave from "
+        },
+        {
+          "text": "March 1st",
+          "entityType": "@sys.date",
+          "alias": "start-date"
+        },
+        {
+          "text": " to "
+        },
+        {
+          "text": "March 5th",
+          "entityType": "@sys.date",
+          "alias": "end-date"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "Can I take "
+        },
+        {
+          "text": "sick",
+          "entityType": "@leave-type",
+          "alias": "leave-type"
+        },
+        {
+          "text": " leave tomorrow"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "I want to apply for vacation from "
+        },
+        {
+          "text": "next Monday",
+          "entityType": "@sys.date",
+          "alias": "start-date"
+        },
+        {
+          "text": " to "
+        },
+        {
+          "text": "next Friday",
+          "entityType": "@sys.date",
+          "alias": "end-date"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "Request "
+        },
+        {
+          "text": "personal",
+          "entityType": "@leave-type",
+          "alias": "leave-type"
+        },
+        {
+          "text": " leave for "
+        },
+        {
+          "text": "EMP001",
+          "entityType": "@employee-id",
+          "alias": "employee-id"
+        }
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "name": "start-date",
+      "displayName": "Start Date",
+      "entityTypeDisplayName": "@sys.date",
+      "mandatory": true,
+      "prompts": [
+        "What is the start date for your leave?"
+      ]
+    },
+    {
+      "name": "end-date",
+      "displayName": "End Date",
+      "entityTypeDisplayName": "@sys.date",
+      "mandatory": true,
+      "prompts": [
+        "What is the end date for your leave?"
+      ]
+    },
+    {
+      "name": "leave-type",
+      "displayName": "Leave Type",
+      "entityTypeDisplayName": "@leave-type",
+      "mandatory": false,
+      "defaultValue": "annual"
+    },
+    {
+      "name": "employee-id",
+      "displayName": "Employee ID",
+      "entityTypeDisplayName": "@employee-id",
+      "mandatory": true,
+      "prompts": [
+        "What is your employee ID?"
+      ]
+    }
+  ],
+  "responses": [
+    {
+      "messages": [
+        {
+          "text": {
+            "text": [
+              "I'll process your leave request. Let me check your balance and approve it."
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "webhookState": "WEBHOOK_STATE_ENABLED"
+}

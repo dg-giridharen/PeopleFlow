@@ -1,0 +1,100 @@
+{
+  "name": "asset.provision",
+  "displayName": "Asset Provision",
+  "priority": 500000,
+  "trainingPhrases": [
+    {
+      "parts": [
+        {
+          "text": "Provision assets for new hire "
+        },
+        {
+          "text": "EMP010",
+          "entityType": "@employee-id",
+          "alias": "employee-id"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "Set up equipment for employee "
+        },
+        {
+          "text": "EMP001",
+          "entityType": "@employee-id",
+          "alias": "employee-id"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "Assign standard equipment to "
+        },
+        {
+          "text": "EMP005",
+          "entityType": "@employee-id",
+          "alias": "employee-id"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "I need to provision assets for the new software engineer"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "Can you set up equipment for our new hire with ID "
+        },
+        {
+          "text": "EMP010",
+          "entityType": "@employee-id",
+          "alias": "employee-id"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "text": "Allocate standard assets for "
+        },
+        {
+          "text": "EMP003",
+          "entityType": "@employee-id",
+          "alias": "employee-id"
+        }
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "name": "employee-id",
+      "displayName": "Employee ID",
+      "entityTypeDisplayName": "@employee-id",
+      "mandatory": true,
+      "prompts": [
+        "What is the employee ID for the new hire?",
+        "Please provide the employee ID for asset provisioning."
+      ]
+    }
+  ],
+  "responses": [
+    {
+      "messages": [
+        {
+          "text": {
+            "text": [
+              "I'll provision the standard assets for this employee based on their role."
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "webhookState": "WEBHOOK_STATE_ENABLED"
+}
